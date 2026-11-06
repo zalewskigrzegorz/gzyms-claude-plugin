@@ -19,10 +19,18 @@ grep -q "\"state\":\"$1\"" "$file" 2>/dev/null && exit 0
 
 j() { local s="${1:0:300}"; s="${s//\\/\\\\}"; s="${s//\"/\\\"}"; printf '%s' "${s//[[:cntrl:]]/ }"; }
 cwd=$(field cwd)
+# No hook fires when Claude dies with its window, or when you reject a prompt or press Esc. Gzyms covers those
+# itself: a session whose process is gone leaves the bar, and a transcript written after "waits" means it no longer waits.
+p=$PPID pid=0
+for _ in 1 2 3 4 5; do
+  case "$(ps -o comm= -p "$p" 2>/dev/null)" in *claude*) pid=$p; break ;; esac
+  p=$(ps -o ppid= -p "$p" 2>/dev/null | tr -d ' ')
+  [ -n "$p" ] && [ "$p" -gt 1 ] || break
+done
 mkdir -p "$dir" || exit 0
 tmp="$file.$$"
-printf '{"id":"%s","state":"%s","since":%s,"cwd":"%s","name":"%s","message":"%s","tuios_pane":"%s","term":"%s","entry":"%s"}\n' \
-  "$id" "$1" "$(date +%s)" "$(j "$cwd")" "$(j "${cwd##*/}")" "$(j "$(field message)")" \
+printf '{"id":"%s","state":"%s","since":%s,"pid":%s,"transcript":"%s","cwd":"%s","name":"%s","message":"%s","tuios_pane":"%s","term":"%s","entry":"%s"}\n' \
+  "$id" "$1" "$(date +%s)" "${pid:-0}" "$(j "$(field transcript_path)")" "$(j "$cwd")" "$(j "${cwd##*/}")" "$(j "$(field message)")" \
   "$(j "${TUIOS_PANE_ID:-}")" "$(j "${TERM_PROGRAM:-}")" "$(j "${CLAUDE_CODE_ENTRYPOINT:-}")" > "$tmp" \
   && mv -f "$tmp" "$file"
 rm -f "$tmp"
