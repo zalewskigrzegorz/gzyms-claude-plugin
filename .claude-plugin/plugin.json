@@ -1,7 +1,7 @@
 {
   "name": "gzyms",
   "displayName": "Gzyms",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Your Claude Code sessions on the Gzyms bar: which one works, which one waits for you, which one is done.",
   "author": { "name": "Grzegorz Zalewski", "url": "https://github.com/zalewskigrzegorz" },
   "homepage": "https://gzyms.dev/docs/#agents",

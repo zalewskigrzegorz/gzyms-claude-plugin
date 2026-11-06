@@ -32,6 +32,11 @@ if [ "$event" = PermissionRequest ]; then
   esac
 fi
 
+# The session's title says what it does: the one you gave it (Claude Desktop names every session), else Claude's own.
+transcript=$(field transcript_path)
+title=$(grep -o '"customTitle":"[^"]*"' "$transcript" 2>/dev/null | tail -1 | cut -d'"' -f4)
+[ -n "$title" ] || title=$(grep -o '"aiTitle":"[^"]*"' "$transcript" 2>/dev/null | tail -1 | cut -d'"' -f4)
+
 j() { local s="${1:0:300}"; s="${s//\\/\\\\}"; s="${s//\"/\\\"}"; printf '%s' "${s//[[:cntrl:]]/ }"; }
 cwd=$(field cwd)
 # No hook fires when Claude dies with its window, or when you reject a prompt or press Esc. Gzyms covers those
@@ -44,8 +49,8 @@ for _ in 1 2 3 4 5; do
 done
 mkdir -p "$dir" || exit 0
 tmp="$file.$$"
-printf '{"id":"%s","state":"%s","since":%s,"pid":%s,"transcript":"%s","cwd":"%s","name":"%s","message":"%s","tuios_pane":"%s","term":"%s","entry":"%s"}\n' \
-  "$id" "$1" "$(date +%s)" "${pid:-0}" "$(j "$(field transcript_path)")" "$(j "$cwd")" "$(j "${cwd##*/}")" "$(j "$message")" \
+printf '{"id":"%s","state":"%s","since":%s,"pid":%s,"transcript":"%s","cwd":"%s","name":"%s","title":"%s","message":"%s","tuios_pane":"%s","term":"%s","entry":"%s"}\n' \
+  "$id" "$1" "$(date +%s)" "${pid:-0}" "$(j "$transcript")" "$(j "$cwd")" "$(j "${cwd##*/}")" "$(j "$title")" "$(j "$message")" \
   "$(j "${TUIOS_PANE_ID:-}")" "$(j "${TERM_PROGRAM:-}")" "$(j "${CLAUDE_CODE_ENTRYPOINT:-}")" > "$tmp" \
   && mv -f "$tmp" "$file"
 rm -f "$tmp"
