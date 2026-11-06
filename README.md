@@ -9,7 +9,7 @@ claude plugin marketplace add zalewskigrzegorz/gzyms-claude-plugin
 claude plugin install gzyms@gzyms
 ```
 
-Gzyms can do this for you too, from Settings → Agents.
+The Agents pill in Gzyms reading these sessions comes in the next Gzyms release.
 
 ## What it does
 
