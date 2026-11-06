@@ -1,0 +1,11 @@
+{
+  "name": "gzyms",
+  "displayName": "Gzyms",
+  "version": "0.1.0",
+  "description": "Your Claude Code sessions on the Gzyms bar: which one works, which one waits for you, which one is done.",
+  "author": { "name": "Grzegorz Zalewski", "url": "https://github.com/zalewskigrzegorz" },
+  "homepage": "https://gzyms.dev/docs/#agents",
+  "repository": "https://github.com/zalewskigrzegorz/gzyms-claude-plugin",
+  "license": "MIT",
+  "keywords": ["gzyms", "macos", "status-bar", "notifications"]
+}

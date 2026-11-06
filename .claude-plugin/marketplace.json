@@ -1,0 +1,12 @@
+{
+  "name": "gzyms",
+  "description": "Gzyms plugins for Claude Code",
+  "owner": { "name": "Grzegorz Zalewski", "url": "https://github.com/zalewskigrzegorz" },
+  "plugins": [
+    {
+      "name": "gzyms",
+      "source": "./",
+      "description": "Your Claude Code sessions on the Gzyms bar: which one works, which one waits for you, which one is done."
+    }
+  ]
+}
