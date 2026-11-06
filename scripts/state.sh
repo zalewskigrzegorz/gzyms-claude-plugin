@@ -15,7 +15,22 @@ file="$dir/$id.json"
 if [ "$1" = end ]; then rm -f "$file"; exit 0; fi
 
 # PreToolUse fires on every tool call: write only when the state changes, so "since" keeps when the run began.
-grep -q "\"state\":\"$1\"" "$file" 2>/dev/null && exit 0
+# PermissionRequest may still overwrite a "waits" the Notification wrote first: it knows what Claude asks.
+event=$(field hook_event_name)
+[ "$event" != PermissionRequest ] && grep -q "\"state\":\"$1\"" "$file" 2>/dev/null && exit 0
+
+# What Claude waits for, in words. PermissionRequest knows the tool, a Notification only says "needs your permission".
+message=$(field message)
+if [ "$event" = PermissionRequest ]; then
+  tool=$(field tool_name)
+  case "$tool" in
+    AskUserQuestion) message=$(field tool_input.questions.0.question) ;;
+    Bash) message="Run: $(field tool_input.command)" ;;
+    Write | Edit | MultiEdit | NotebookEdit) message="Edit $(field tool_input.file_path)" ;;
+    WebFetch) message="Open $(field tool_input.url)" ;;
+    *) message="Use $tool" ;;
+  esac
+fi
 
 j() { local s="${1:0:300}"; s="${s//\\/\\\\}"; s="${s//\"/\\\"}"; printf '%s' "${s//[[:cntrl:]]/ }"; }
 cwd=$(field cwd)
@@ -30,7 +45,7 @@ done
 mkdir -p "$dir" || exit 0
 tmp="$file.$$"
 printf '{"id":"%s","state":"%s","since":%s,"pid":%s,"transcript":"%s","cwd":"%s","name":"%s","message":"%s","tuios_pane":"%s","term":"%s","entry":"%s"}\n' \
-  "$id" "$1" "$(date +%s)" "${pid:-0}" "$(j "$(field transcript_path)")" "$(j "$cwd")" "$(j "${cwd##*/}")" "$(j "$(field message)")" \
+  "$id" "$1" "$(date +%s)" "${pid:-0}" "$(j "$(field transcript_path)")" "$(j "$cwd")" "$(j "${cwd##*/}")" "$(j "$message")" \
   "$(j "${TUIOS_PANE_ID:-}")" "$(j "${TERM_PROGRAM:-}")" "$(j "${CLAUDE_CODE_ENTRYPOINT:-}")" > "$tmp" \
   && mv -f "$tmp" "$file"
 rm -f "$tmp"

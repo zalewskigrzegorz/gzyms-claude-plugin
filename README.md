@@ -19,7 +19,7 @@ Hooks write one small JSON file per session to `~/Library/Application Support/Gz
 | --- | --- |
 | `SessionStart` | `idle` |
 | `UserPromptSubmit`, `PreToolUse` | `working` |
-| `Notification` (permission prompt, question) | `waits` |
+| `PermissionRequest`, `Notification` (permission prompt, question) | `waits`, with the question or command |
 | `Stop` | `done` |
 | `SessionEnd` | file removed |
 

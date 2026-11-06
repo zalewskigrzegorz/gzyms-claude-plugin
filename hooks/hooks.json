@@ -9,6 +9,9 @@
     "PreToolUse": [
       { "hooks": [{ "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/state.sh working", "async": true, "timeout": 5 }] }
     ],
+    "PermissionRequest": [
+      { "hooks": [{ "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/state.sh waits", "async": true, "timeout": 5 }] }
+    ],
     "Notification": [
       { "matcher": "permission_prompt|elicitation_dialog", "hooks": [{ "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/state.sh waits", "async": true, "timeout": 5 }] }
     ],
