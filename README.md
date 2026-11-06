@@ -23,7 +23,7 @@ Hooks write one small JSON file per session to `~/Library/Application Support/Gz
 | `Stop` | `done` |
 | `SessionEnd` | file removed |
 
-A file holds the session id, the state and since when, the folder, the Notification text, and the terminal it runs in. It never holds your prompts or Claude's answers. Nothing leaves your Mac.
+A file holds the session id, the state and since when, the folder, the terminal it runs in, and while it waits the question Claude asks you or the command it wants to run. It never holds your prompts or Claude's answers. Nothing leaves your Mac.
 
 The hooks run in the background and always exit 0, so they never slow down or stop Claude Code, even when Gzyms is not running.
 
